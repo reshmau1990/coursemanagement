@@ -16,7 +16,7 @@
           </thead>
           <tbody>  
               <tr *ngFor='let student of students'>
-                  <td><button  (click)="viewStudent(student)">{{ student.fname }}</button></td>
+                  <td><button type="button" class="btn btn-link"  (click)="viewStudent(student)">{{ student.fname }}</button></td>
               </tr>              
           </tbody>
         </table>

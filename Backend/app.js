@@ -1,8 +1,7 @@
 const express = require('express');
 const port = process.env.PORT || 3000;
-var nodemailer = require('nodemailer');
-var smtpTransport = require('nodemailer-smtp-transport');
-// const User = require('./src/model/user');
+// var nodemailer = require('nodemailer');
+// var smtpTransport = require('nodemailer-smtp-transport');
 const EmployerData = require('./src/model/EmployerData');
 const StudentRegisterData = require('./src/model/StudentRegisterData');
 const StdData = require('./src/model/StdData');
@@ -15,8 +14,7 @@ const { db } = require('./src/model/EmployerData');
 var app = new express();
 app.use(cors());
 app.use(bodyparser.json());
-email='admn4928@gmail.com';
-password='Admin@123';
+
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -50,31 +48,31 @@ function verifyToken(req, res, next) {
 }
 
 app.post('/login', (req, res) => {
-  let user = req.body;
-
-  if(email){
-    if(password==user.password){
-        let payload = {subject: email+password}
-        let token = jwt.sign(payload, 'secretKey')
-        res.status(200).send({token})
-    }
-    else{
+  let user = req.body;   
 
       EmployerData.findOne({email: user.email, password: user.password}, function(err, item){
+
         if(err){
              res.status(401).send('Invalid credentials');
         }
         if(item){
-            console.log(item)
-             res.send(item);
+
+          let user = {
+            email: req.body.email,
+            password: req.body.password
+          }
+
+            let payload = {subject: user.email+user.password}
+            let token = jwt.sign(payload, 'secretKey')
+            res.status(200).send({token})
+            // console.log(item)
+            // res.send(item);
         }
         else{
           res.status(401).send('Invalid');
         }
 
       })
-    }
-  }
 })
 
 app.post('/studentlogin', (req, res) => {
@@ -91,9 +89,6 @@ app.post('/studentlogin', (req, res) => {
             item = db.collection('studentregisterdatas').findOne({email:user.email})
             .then((item)=>{
               var userId=item._id
-              // console.log(userId)
-
-              // console.log(item);
               res.status(200).json({
                 userId:item._id
               })
@@ -248,7 +243,7 @@ console.log(user);
 app.get('/studenthome/stdhome/:id',  (req, res) => {
   userid = req.params.id;
   // console.log(userid);
-    StudentData.findOne({"id":userid})
+    StdData.findOne({"id":userid})
     .then((student)=>{
       res.send(student);
     });
@@ -326,62 +321,6 @@ app.get('/adminhome/dashboard/stdlist/:id',  (req, res) => {
     });
 })
 
-
-app.post('/adminhome/dashboard/stdlist/student/approve', verifyToken, (req, res) => {
-  id = req.body._id;
-  console.log(id);
-  useremail=req.body.email;
-console.log(useremail);
-  StdData.findOne({"_id":id})
-  .then((student)=>{
-    var str = '';
-    const uid = crypto.randomBytes(2).toString("hex");
-    str+=uid+student.fname.substring(0,3);
-    console.log(str);
-    
-    var transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "admn4928@gmail.com",
-        pass: "Admin@123"
-      }
-    });
-    
-    var mailOptions = {
-      from: "admn4928@gmail.com",
-      to: useremail,
-      subject: "AUTOMATED EMAIL FROM NODE",
-      text: "Your Enrollment form is approved. Online fee payment is available in your login account. Auto generated ID is " +str
-    };
-
-  StudentData.insertMany(student)
-  .then(()=>{
-    console.log('success')
-    StudentData.findOneAndUpdate({"_id":id},
-    {$set:{"value":str}})
-    .then(()=>{
-      StdData.findByIdAndDelete({"_id":id})
-      .then(()=>{
-        transporter.sendMail(mailOptions, function(error, info){
-          if (error) {
-            console.log(error);
-          } 
-          else {
-            res.write("Hai, I am Reshma U");
-            res.end();
-            console.log('Email sent: ' + info.response);
-          }
-      });
-      })
-  })
-})
-
-  })
-
-
-  
-})
-
 app.get('/adminhome/students',function(req,res){  
   StudentData.find()
               .then(function(students){
@@ -398,122 +337,6 @@ app.get('/adminhome/students/:id',  (req, res) => {
     });
 })
 
-app.put('/adminhome/students/update',upload.single('image'),verifyToken,(req,res)=>{
-  console.log(req.body)
-  id=req.body._id,
-
-      fname=req.body.fname,
-      age=req.body.age,
-      address=req.body.address,
-      district=req.body.district,
-      email=req.body.email,
-      phno=req.body.phno,
-      dob=req.body.dob,
-      gender=req.body.gender,
-      quali=req.body.quali,
-      poy=req.body.poy,
-      skill=req.body.skill,
-      wstatus=req.body.wstatus,
-      techtrain=req.body.techtrain,
-      year=req.body.year,
-      course=req.body.course
-
-      if(req.file){
-
-        photo = req.file.originalname
-      }
-      else{
-        photo = req.body.photo;
-      }
-
-  StudentData.findByIdAndUpdate({"_id":id},
-                              {$set:{"fname":fname,
-                              "age":age,
-                              "address":address,
-                              "email":email,
-                              "phno":phno,
-                              "dob":dob,
-                              "gender":gender,
-                              "quali":quali,
-                              "poy":poy,
-                              "skill":skill,
-                              "wstatus":wstatus,
-                              "techtrain":techtrain,
-                              "year":year,
-                              "course":course,
-                              "photo":photo}})
- .then(function(){
-     res.send();
- })
-})
-
-
-
-
-
-app.delete('/adminhome/students/remove/:id',verifyToken,(req,res)=>{
-
- id = req.params.id;
- StudentData.findByIdAndDelete({"_id":id})
- .then(()=>{
-     console.log('success')
-     res.send();
- })
-})
-
-app.delete('/adminhome/dashboard/stdlist/remove/:id',verifyToken,(req,res)=>{
-
-  id = req.params.id;
-  StdData.findByIdAndDelete({"_id":id})
-  .then(()=>{
-      console.log('success')
-      res.send();
-  })
- })
-
- app.get('/adminhome/employers',verifyToken,function(req,res){
-    
-  EmployerData.find()
-              .then(function(employers){
-                  res.send(employers);
-              });
-});
-app.get('/adminhome/employers/:id',verifyToken,  function(req, res)  {
-
-const id = req.params.id;
-  EmployerData.findOne({"_id":id})
-  .then((employer)=>{
-      res.send(employer);
-  });
-})
-
-app.put('/adminhome/employers/update-employer',verifyToken,(req,res)=>{
-  console.log(req.body)
-  id=req.body._id,
-  fname = req.body.fname,
-  email = req.body.email,
-  quali = req.body.quali,
- EmployerData.findByIdAndUpdate({"_id":id},
-                              {$set:{
-                              "fname":fname,
-                              "email":email,
-                              "quali":quali
-                              }})
- .then(function(){
-     res.send();
- })
-})
-
-app.delete('/adminhome/employers/remove/:id',verifyToken,(req,res)=>{
-
- id = req.params.id;
- EmployerData.findByIdAndDelete({"_id":id})
- .then(()=>{
-     console.log('success')
-     res.send();
- })
-})
- 
 
      
   app.listen(port, ()=>{

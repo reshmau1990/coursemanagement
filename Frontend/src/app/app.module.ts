@@ -18,21 +18,17 @@ import { LoginComponent } from './login/login.component';
 import { AdminhomeComponent } from './adminhome/adminhome.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { StdformComponent } from './stdform/stdform.component';
-import { ViewprofileComponent } from './viewprofile/viewprofile.component';
 import { StdhomeComponent } from './stdhome/stdhome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { StudentsComponent } from './students/students.component';
-import { UpdateComponent } from './update/update.component';
 import { StdlistComponent } from './stdlist/stdlist.component';
 import { StudentComponent } from './student/student.component';
-import { EmployersComponent } from './employers/employers.component';
 import { NewemployerComponent } from './newemployer/newemployer.component';
-import { UpdateEmployerComponent } from './update-employer/update-employer.component';
 import { StdregComponent } from './stdreg/stdreg.component';
-import { FeePayemtComponent } from './fee-payemt/fee-payemt.component';
-import { SearchComponent } from './search/search.component';
-import { EditprofileComponent } from './editprofile/editprofile.component';
+import { ViewprofileComponent } from './viewprofile/viewprofile.component';
 import { ViewprofComponent } from './viewprof/viewprof.component';
+import { EditprofileComponent } from './editprofile/editprofile.component';
+import { CoursesComponent } from './courses/courses.component';
 
 @NgModule({
   declarations: [
@@ -48,21 +44,17 @@ import { ViewprofComponent } from './viewprof/viewprof.component';
     AdminhomeComponent,
     NavbarComponent,
     StdformComponent,
-    ViewprofileComponent,
     StdhomeComponent,
     DashboardComponent,
     StudentsComponent,
-    UpdateComponent,
     StdlistComponent,
     StudentComponent,
-    EmployersComponent,
     NewemployerComponent,
-    UpdateEmployerComponent,
     StdregComponent,
-    FeePayemtComponent,
-    SearchComponent,
+    ViewprofileComponent,
+    ViewprofComponent,
     EditprofileComponent,
-    ViewprofComponent
+    CoursesComponent
   ],
   imports: [
     BrowserModule,

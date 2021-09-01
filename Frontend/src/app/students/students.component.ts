@@ -8,7 +8,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./students.component.css']
 })
 export class StudentsComponent implements OnInit {
-  pageTitle: string = 'Student Details';
+  pageTitle: string = 'Approved Students List';
   imageWidth: number = 50;
   imageMargin: number = 2;
 
